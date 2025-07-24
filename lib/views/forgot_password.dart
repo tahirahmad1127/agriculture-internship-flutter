@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/views/login.dart';
 
 class Forgot_Password extends StatelessWidget {
   Forgot_Password({super.key});
@@ -101,7 +102,10 @@ class Forgot_Password extends StatelessWidget {
                             width: Screen_width * 0.9,
                             height: Screen_height * 0.07,
                             child: TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> Login()));
+
+                              },
                               child: Text("Get Link"),
                               style: TextButton.styleFrom(
                                   backgroundColor: Color(0xff339D44),

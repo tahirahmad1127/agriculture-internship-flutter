@@ -21,7 +21,8 @@ class _QuestionsState extends State<Questions> {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-          elevation: 0,
+            automaticallyImplyLeading: false,
+            elevation: 0,
           shadowColor: Colors.transparent,
           title:
           Padding(
@@ -96,12 +97,15 @@ class _QuestionsState extends State<Questions> {
             ),
           ),
           actions : [
-            IconButton(onPressed: (){
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchQuestions()));
-            }, icon: Icon(
-                Icons.search,
-                color: Color(0xff339D44),
-              )),
+            Padding(
+              padding:  EdgeInsets.only(right: Screen_width * 0.05),
+              child: IconButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> SearchQuestions()));
+              }, icon: Icon(
+                  Icons.search,
+                  color: Color(0xff339D44),
+                )),
+            ),
           ]
         ),
         body: TabBarView (

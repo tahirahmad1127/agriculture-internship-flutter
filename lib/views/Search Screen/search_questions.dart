@@ -28,7 +28,9 @@ class SearchQuestions extends StatelessWidget {
           actions : [
             Padding(
               padding:  EdgeInsets.only(right: Screen_width * 0.03),
-              child: IconButton(onPressed: (){}, icon: Icon(
+              child: IconButton(onPressed: (){
+                Navigator.pop(context);
+              }, icon: Icon(
                 Icons.close,
                 color: Color(0xff339D44),
               )),

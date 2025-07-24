@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/views/registration1.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'onboarding/onboarding_1.dart';
 import 'onboarding/onboarding_2.dart';
@@ -60,6 +61,7 @@ class _OnboardingState extends State<Onboarding> {
                     padding: const EdgeInsets.only(bottom: 20, right: 20),
                     child: TextButton(
                       onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Registration1()));
                       },
                       child: Text(
                         "Skip",

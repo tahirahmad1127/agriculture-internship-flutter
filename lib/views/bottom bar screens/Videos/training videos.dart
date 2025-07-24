@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/views/Search%20Screen/search_questions.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/Videos.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/add_video.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/search_videos.dart';
 
 class TrainingVideos extends StatelessWidget {
@@ -73,6 +74,7 @@ class TrainingVideos extends StatelessWidget {
                     ]),
               ),
             ),
+            automaticallyImplyLeading: false,
             actions: [
               IconButton(
                   onPressed: () {
@@ -92,7 +94,7 @@ class TrainingVideos extends StatelessWidget {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SearchQuestions()));
+                              builder: (context) => AddVideo()));
                     },
                     icon: Icon(
                       Icons.add,

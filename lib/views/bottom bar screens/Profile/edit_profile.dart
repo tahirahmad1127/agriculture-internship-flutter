@@ -26,7 +26,9 @@ class _EditProfileState extends State<EditProfile> {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
-        leading: IconButton(onPressed: (){}, icon:Icon(Icons.arrow_back,
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon:Icon(Icons.arrow_back,
         color: Color(0xff339D44),
         ),
         ),

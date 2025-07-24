@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/profile.dart';
+import 'package:internship_task_1/views/verification_code.dart';
 
 class Settings extends StatelessWidget {
   const Settings({super.key});
@@ -99,13 +100,19 @@ class Settings extends StatelessWidget {
                          color: Color(0xffF24E1E),
                          ),
                          SizedBox(width: Screen_width * 0.01,),
-                         Text("Logout",
-                           style: GoogleFonts.raleway(
+                         GestureDetector(
+                           onTap: (){
+                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GreenDiaglogBox()));
+
+                           },
+                           child: Text("Logout",
+                             style: GoogleFonts.raleway(
                                fontSize: 13,
                                fontWeight: FontWeight.w700,
                                color: Color(0xffF24E1E),
+                             ),
                            ),
-                         ),
+                         )
 
                        ],
                      ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/views/login.dart';
 
 
 void show_dialog_box(BuildContext context) {
@@ -39,7 +40,7 @@ void show_dialog_box(BuildContext context) {
               height: screen_height * 0.07,
               child: TextButton(
                 onPressed: (){
-                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> Login()));
                 },
                 child: Text("Login"),
                 style: TextButton.styleFrom(

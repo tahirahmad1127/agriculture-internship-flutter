@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/models/video_model.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/comments.dart';
 
 class SearchVideos extends StatefulWidget {
   SearchVideos({super.key});
@@ -60,7 +61,9 @@ class _SearchVideosState extends State<SearchVideos> {
             Padding(
               padding: EdgeInsets.only(right: Screen_width * 0.05),
               child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   icon: Icon(
                     Icons.close,
                     color: Color(0xff339D44),
@@ -179,7 +182,9 @@ class _SearchVideosState extends State<SearchVideos> {
                             ),
                             SizedBox(width: Screen_width * 0.02,),
 
-                            IconButton(onPressed: (){}, icon: Icon(videoItems[index].saveIcon),
+                            IconButton(onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> Comments()));
+                            }, icon: Icon(videoItems[index].saveIcon),
                               color: Color(0xffB4B4B4),
                             ),
                             Text(videoItems[index].saves.toString(),

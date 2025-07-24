@@ -2,9 +2,28 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/views/Onboarding.dart';
 
-class Splash_Screen extends StatelessWidget {
+class Splash_Screen extends StatefulWidget {
   const Splash_Screen({super.key});
+
+  @override
+  State<Splash_Screen> createState() => _Splash_ScreenState();
+}
+
+class _Splash_ScreenState extends State<Splash_Screen> {
+
+  void initState() {
+    super.initState();
+
+    // Timer for 2 seconds
+    Future.delayed(Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Onboarding()),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

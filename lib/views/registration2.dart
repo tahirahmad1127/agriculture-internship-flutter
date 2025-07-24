@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,11 +13,32 @@ class Registration2 extends StatefulWidget {
 
 class _Registration2State extends State<Registration2> {
   String? selectedValue;
-  List<String> items = ['Web Development', 'Flutter', 'Hardware Based Coding'];
+  List<String> items = [];
+  bool isLoading = false;
   TextEditingController qualification_controller = TextEditingController();
   TextEditingController address_controller = TextEditingController();
   TextEditingController contact_controller = TextEditingController();
+  
+  void initState(){
+    super.initState();
+    fetchExpertise();
+  }
 
+  Future<void> fetchExpertise() async{
+    final snapshot = await FirebaseFirestore.instance.collection('expertise_list').get();
+    final List<String> loadedItems=[];
+
+    for(var doc in snapshot.docs){
+      loadedItems.add(doc['name']);
+    }
+
+    setState(() {
+      items = loadedItems;
+      isLoading = false;
+    });
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
     final screen_width = MediaQuery.of(context).size.width;

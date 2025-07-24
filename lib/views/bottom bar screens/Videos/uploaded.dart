@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/training%20videos.dart';
 
 
 void show_upoaded_dialog_box(BuildContext context) {
@@ -39,7 +40,7 @@ void show_upoaded_dialog_box(BuildContext context) {
               height: screen_height * 0.07,
               child: TextButton(
                 onPressed: (){
-                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=> TrainingVideos()));
                 },
                 child: Text("View Videos"),
                 style: TextButton.styleFrom(

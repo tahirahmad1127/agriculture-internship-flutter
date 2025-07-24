@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:internship_task_1/views/404_not_found.dart';
 import 'package:internship_task_1/views/Onboarding.dart';
@@ -26,7 +27,9 @@ import 'package:internship_task_1/views/registration1.dart';
 import 'package:internship_task_1/views/registration2.dart';
 import 'package:internship_task_1/views/splash_screen.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -38,7 +41,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home:  ConnectionLost(),
+      home:  Splash_Screen(),
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/home/home.dart';
+import 'package:internship_task_1/views/forgot_password.dart';
+import 'package:internship_task_1/views/navigation_bottom_bar.dart';
+import 'package:internship_task_1/views/registration1.dart';
 
 class Login extends StatelessWidget {
   Login({super.key});
@@ -115,7 +119,10 @@ class Login extends StatelessWidget {
                           SizedBox(height: 20,),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: TextButton(onPressed: (){}, child: Text("Forgot Password?",
+                            child: TextButton(onPressed: (){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> Forgot_Password()));
+
+                            }, child: Text("Forgot Password?",
                               style: GoogleFonts.raleway(
                                   fontSize: 13,
                                   fontWeight: FontWeight.w500,
@@ -129,7 +136,10 @@ class Login extends StatelessWidget {
                             width: Screen_width * 0.9,
                             height: Screen_height * 0.07,
                             child: TextButton(
-                              onPressed: (){}, child: Text("Login"),
+                              onPressed: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=> NavigationBottomBar()));
+
+                              }, child: Text("Login"),
                               style: TextButton.styleFrom(
                                   backgroundColor: Color(0xff339D44),
                                   foregroundColor: Color(0xffF4F4F4),
@@ -148,7 +158,10 @@ class Login extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 10,),
-                          TextButton(onPressed: (){}, child: Text("Sign Up",
+                          GestureDetector(onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=> Registration1()));
+
+                          }, child: Text("Sign Up",
                             style: GoogleFonts.raleway(
                                 fontSize: 27,
                                 fontWeight: FontWeight.w700,

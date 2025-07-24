@@ -41,6 +41,9 @@ dependencies:
   dotted_border: ^2.0.0
   bottom_navbar_with_indicator: ^0.0.9
   persistent_bottom_nav_bar_v2: ^5.4.0
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.7.0
+  cloud_firestore: ^5.6.12
 
 
 dev_dependencies:

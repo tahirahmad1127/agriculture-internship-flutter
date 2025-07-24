@@ -27,7 +27,7 @@ class _AllState extends State<All> {
     final Screen_height = MediaQuery.of(context).size.height;
     final Screen_width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: AppBar(),
+
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(

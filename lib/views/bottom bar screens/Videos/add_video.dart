@@ -23,7 +23,9 @@ class AddVideo extends StatelessWidget {
         leading: Padding(
           padding: EdgeInsets.only(left: screenWidth * 0.05),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             icon: Icon(
               Icons.arrow_back,
               color: Color(0xff339D44),

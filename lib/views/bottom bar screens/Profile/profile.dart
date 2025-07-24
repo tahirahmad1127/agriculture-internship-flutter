@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/Ratings_&_Reviews.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/edit_profile.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/review%20function%20for%20profile.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/reviews%20function.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/settings.dart';
@@ -15,6 +16,7 @@ class Profile extends StatelessWidget {
     final Screen_width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: 0,
           shadowColor: Colors.transparent,
           title: Padding(
@@ -76,7 +78,10 @@ class Profile extends StatelessWidget {
             SizedBox(
               width: Screen_width * 0.35,
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> EditProfile()));
+
+                  },
                   style: TextButton.styleFrom(
 
                     backgroundColor: Color(0xff339D44),
