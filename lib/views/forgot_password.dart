@@ -1,20 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/services/auth.dart';
 import 'package:internship_task_1/views/login.dart';
 
-class Forgot_Password extends StatelessWidget {
+class Forgot_Password extends StatefulWidget {
   Forgot_Password({super.key});
 
+  @override
+  State<Forgot_Password> createState() => _Forgot_PasswordState();
+}
+
+class _Forgot_PasswordState extends State<Forgot_Password> {
   TextEditingController name_controller = TextEditingController();
+
   TextEditingController email_controller = TextEditingController();
+
   TextEditingController pwd_controller = TextEditingController();
+
   TextEditingController confirmpwd_controller = TextEditingController();
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+
     final Screen_width = MediaQuery.of(context).size.width;
     final Screen_height = MediaQuery.of(context).size.height;
     return Scaffold(
+
       body: Column(
         children: [
           Expanded(
@@ -72,7 +84,7 @@ class Forgot_Password extends StatelessWidget {
                             height: 30,
                           ),
                           TextFormField(
-                            controller: name_controller,
+                            controller: email_controller,
                             decoration: InputDecoration(
                               hintText: "yourEmail@email.com",
                               hintStyle: GoogleFonts.raleway(
@@ -98,13 +110,46 @@ class Forgot_Password extends StatelessWidget {
                           SizedBox(
                             height: Screen_height * 0.3,
                           ),
+                          isLoading ?
+                              Center(
+                                child: CircularProgressIndicator(),
+                              )
+                          :
                           Container(
                             width: Screen_width * 0.9,
                             height: Screen_height * 0.07,
                             child: TextButton(
-                              onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=> Login()));
+                              onPressed: () async {
+                                if(email_controller.text.isEmpty){
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Email Cannot be empty")));
+                                  return;
+                                }
+                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}$').hasMatch(email_controller.text)) {
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Please enter a valid email")));
+                                  return;
+                                }
+                                try{
+                                  isLoading = true;
+                                  setState(() {});
 
+                                  await AuthServices().
+                                  resetPassword(email_controller.text)
+                                  .then((val){
+                                    isLoading = false;
+                                    setState(() {});
+                                    showDialog(context: context, builder: (context){
+                                      return AlertDialog(
+                                        title: Text("Message"),
+                                        content: Text("An email with password reset link has been sent to your mail box"),
+                                      );
+                                    });
+                                  });
+                                }
+                                catch (e){
+                                  isLoading = false;
+                                  setState(() {});
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                }
                               },
                               child: Text("Get Link"),
                               style: TextButton.styleFrom(

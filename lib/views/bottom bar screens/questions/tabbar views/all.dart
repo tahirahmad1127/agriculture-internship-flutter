@@ -1,279 +1,201 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:internship_task_1/models/questions_model.dart';
+import 'package:internship_task_1/services/questions.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/questions/Answer%20Screen/answer.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/questions/tabbar%20views/no_data_found.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class All extends StatefulWidget {
-  const All({super.key});
+  final String? filterStatus;
+  const All({super.key, this.filterStatus});
 
   @override
   State<All> createState() => _AllState();
 }
 
-PageController _controller = PageController();
-List<String> images = [
-  "assets/images/tractor.png",
-  "assets/images/tractor.png",
-  "assets/images/tractor.png",
-  "assets/images/tractor.png",
-  "assets/images/tractor.png",
-  "assets/images/tractor.png",
-  "assets/images/tractor.png",
-];
-
 class _AllState extends State<All> {
+  final QuestionsService _questionsService = QuestionsService();
+  final Map<int, PageController> _pageControllers = {};
+
   @override
   Widget build(BuildContext context) {
-    final Screen_height = MediaQuery.of(context).size.height;
-    final Screen_width = MediaQuery.of(context).size.width;
-    return Scaffold(
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-      body: SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Screen_height * 0.04),
-            child: Row(
+    return StreamBuilder<List<QuestionsModel>>(
+      stream: _questionsService.getQuestionsStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        final questions = snapshot.data;
+
+        if (questions == null || questions.isEmpty) {
+          return const Center(child: Text("No questions found"));
+        }
+
+        final filteredQuestions = widget.filterStatus == null
+            ? questions
+            : questions.where((q) => q.status == widget.filterStatus).toList();
+        if(filteredQuestions.isEmpty){
+          return No_data_found();
+        }
+        return ListView.builder(
+          itemCount: filteredQuestions.length,
+          itemBuilder: (context, index) {
+            final question = filteredQuestions[index];
+            final controller = _pageControllers.putIfAbsent(
+              index,
+                  () => PageController(),
+            );
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset("assets/images/fareeha.png"),
-                SizedBox(
-                  width: 5,
+                Padding(
+                  padding: EdgeInsets.only(left: screenHeight * 0.04, top: screenHeight * 0.05, right: screenHeight * 0.04),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(question.profileImage),
+                        radius: 16,
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        question.authorName,
+                                        style: GoogleFonts.raleway(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 11,
+                                          color: const Color(0xff292929),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        _getTimeAgo(question.createdAt),
+                                        style: GoogleFonts.raleway(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 9,
+                                          color: const Color(0xffB4B4B4),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (question.status == 'Pending')
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => Answer(question: question)),
+                                      );
+                                    },
+                                    child: Text(
+                                      "Answer",
+                                      style: GoogleFonts.raleway(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 11,
+                                        color: const Color(0xff339D44),
+                                      ),
+                                    ),
+                                  )
+
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenHeight * 0.04),
+                  child: Text(
+                    question.title,
+                    style: GoogleFonts.raleway(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 13,
+                      color: const Color(0xff292929),
+                    ),
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                if (question.images.isNotEmpty)
+                  SizedBox(
+                    height: screenHeight * 0.25,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
                       children: [
-                        Text(
-                          "Fareeha Sadaqat",
-                          style: GoogleFonts.raleway(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 11,
-                              color: Color(0xff292929)),
-                        ),
-                        SizedBox(
-                          width: Screen_width * 0.30,
-                        ),
-                        TextButton(
-                          onPressed:(){
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => Answer(),
-                            ));
+                        PageView.builder(
+                          controller: controller,
+                          itemCount: question.images.length,
+                          itemBuilder: (context, i) {
+                            return Image.network(
+                              question.images[i],
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            );
                           },
-                          child:Text(
-                          "Answer",
-                          style: GoogleFonts.raleway(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 11,
-                              color: Color(0xff339D44)),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(bottom: screenHeight * 0.01),
+                          child: SmoothPageIndicator(
+                            controller: controller,
+                            count: question.images.length,
+                            effect: WormEffect(
+                              dotHeight: 6,
+                              dotWidth: 6,
+                              dotColor: const Color(0xffFFFFFF).withOpacity(0.7),
+                              activeDotColor: const Color(0xffFFFFFF),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    Text(
-                      "10 mins ago",
-                      style: GoogleFonts.raleway(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 9,
-                          color: Color(0xffB4B4B4)),
-                    ),
-                  ],
-                )
+                  ),
+                Divider(
+                  thickness: 1,
+                  color: Colors.grey.shade300.withOpacity(0.2),
+                ),
               ],
-            ),
-          ),
-          SizedBox(
-            height: Screen_height * 0.03,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Screen_height * 0.04),
-            child: Text(
-              "I have an issue regarding this vehicle",
-              style: GoogleFonts.raleway(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 13,
-                  color: Color(0xff292929)),
-            ),
-          ),
-          SizedBox(
-            height: Screen_height * 0.02,
-          ),
-          SizedBox(
-            height: Screen_height * 0.25,
-            child: Stack(alignment: Alignment.bottomCenter, children: [
-              PageView.builder(
-                  controller: _controller,
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          image: AssetImage(images[index]),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  }),
-              Padding(
-                padding: EdgeInsets.only(bottom: Screen_height * 0.01),
-                child: SmoothPageIndicator(
-                  controller: _controller,
-                  count: images.length,
-                  effect: WormEffect(
-                      dotHeight: 6,
-                      dotWidth: 6,
-                      dotColor: Color(0xffFFFFFF).withOpacity(0.7),
-                      activeDotColor: Color(0xffFFFFFF)),
-                ),
-              ),
-            ]),
-          ),
-          SizedBox(
-            height: Screen_height * 0.05,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: Screen_height * 0.04),
-                child: Row(
-                  children: [
-                    Image.asset("assets/images/ali.png"),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Muhammad Ali Nizami",
-                              style: GoogleFonts.raleway(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 11,
-                                  color: Color(0xff292929)),
-                            ),
-                            SizedBox(
-                              width: Screen_width * 0.20,
-                            ),
-                            TextButton(
-                              onPressed:(){
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => Answer(),
-                                ));
-                              },
-                              child:Text(
-                                "Answer",
-                                style: GoogleFonts.raleway(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 11,
-                                    color: Color(0xff339D44)),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "20 mins ago",
-                          style: GoogleFonts.raleway(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 9,
-                              color: Color(0xffB4B4B4)),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: Screen_height * 0.03,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: Screen_height * 0.04),
-                child: Text(
-                  "What is the process of purchasing Vehicle from hardware store?",
-                  style: GoogleFonts.raleway(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
-                      color: Color(0xff292929)),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: Screen_height * 0.05,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: Screen_height * 0.04),
-                child: Row(
-                  children: [
-                    Image.asset("assets/images/masab.png"),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "Masab Mehmood",
-                              style: GoogleFonts.raleway(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 11,
-                                  color: Color(0xff292929)),
-                            ),
-                            SizedBox(
-                              width: Screen_width * 0.30,
-                            ),
-                            TextButton(
-                              onPressed:(){
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) => Answer(),
-                                ));
-                              },
-                              child:Text(
-                                "Answer",
-                                style: GoogleFonts.raleway(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 11,
-                                    color: Color(0xff339D44)),
-                              ),
-                            ),
-                          ],
-                        ),
-                        Text(
-                          "15 mins ago",
-                          style: GoogleFonts.raleway(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 9,
-                              color: Color(0xffB4B4B4)),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: Screen_height * 0.03,
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: Screen_height * 0.04),
-                child: Text(
-                  "What is the process of purchasing Vehicle from hardware store?",
-                  style: GoogleFonts.raleway(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 13,
-                      color: Color(0xff292929)),
-                ),
-              ),
-            ],
-          ),
-        ]),
-      ),
+            );
+          },
+        );
+      },
     );
+  }
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final diff = now.difference(dateTime);
+    if (diff.inMinutes < 1) return "Just now";
+    if (diff.inMinutes < 60) return "${diff.inMinutes} mins ago";
+    if (diff.inHours < 24) return "${diff.inHours} hours ago";
+    return "${diff.inDays} days ago";
+  }
+
+  @override
+  void dispose() {
+    for (var controller in _pageControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 }

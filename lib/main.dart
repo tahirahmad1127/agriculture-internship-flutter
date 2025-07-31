@@ -26,17 +26,26 @@ import 'package:internship_task_1/views/onboarding/onboarding_3.dart';
 import 'package:internship_task_1/views/registration1.dart';
 import 'package:internship_task_1/views/registration2.dart';
 import 'package:internship_task_1/views/splash_screen.dart';
-
+import 'package:provider/provider.dart';
+import 'Providers/user_registration.dart';
 void main() async{
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserRegistrationProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

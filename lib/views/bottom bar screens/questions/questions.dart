@@ -111,8 +111,9 @@ class _QuestionsState extends State<Questions> {
         body: TabBarView (
           children: [
             All(),
-            All(),
-            No_data_found(),
+            All(filterStatus: 'Pending',),
+            All(filterStatus: 'Answered',),
+
           ],
         ),
       ),

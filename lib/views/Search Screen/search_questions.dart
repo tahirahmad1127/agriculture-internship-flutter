@@ -1,10 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/questions/Answer%20Screen/answer.dart';
+import 'package:internship_task_1/models/questions_model.dart';
 
-class SearchQuestions extends StatelessWidget {
+
+final dummyQuestion = QuestionsModel(
+  docId: "dummyId",
+  createdAt: DateTime.now(),
+  profileImage: "https://example.com/image.png",
+  authorName: "Masab Mehmood",
+  title: "What is the process of purchasing Vehicle from hardware store?",
+  images: [],
+  status: "Pending",
+);
+
+
+
+
+class SearchQuestions extends StatefulWidget {
   const SearchQuestions({super.key});
 
+  @override
+  State<SearchQuestions> createState() => _SearchQuestionsState();
+}
+
+class _SearchQuestionsState extends State<SearchQuestions> {
   @override
   Widget build(BuildContext context) {
     final Screen_height = MediaQuery.of(context).size.height;
@@ -99,7 +119,7 @@ class SearchQuestions extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => Answer(),
+                              builder: (context) => Answer(question: dummyQuestion),
                             ));
                           },
                           child: Text(
@@ -172,7 +192,7 @@ class SearchQuestions extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => Answer(),
+                              builder: (context) => Answer(question: dummyQuestion,),
                             ));
                           },
                           child: Text(
