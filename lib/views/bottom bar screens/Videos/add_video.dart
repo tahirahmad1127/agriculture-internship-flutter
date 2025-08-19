@@ -1,19 +1,102 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:internship_task_1/views/account_created.dart';
+import 'package:internship_task_1/services/VideoUpload.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/uploaded.dart';
 
-class AddVideo extends StatelessWidget {
-  const AddVideo({super.key});
+class AddVideo extends StatefulWidget {
+  final String? videoDocId; // pass doc id when editing
+  const AddVideo({super.key, this.videoDocId});
+
+  @override
+  State<AddVideo> createState() => _AddVideoState();
+}
+
+File? selectedVideo;
+File? selectedThumbnail;
+String? videoUrl;
+String? thumbnailUrl;
+final videoUploadService = VideoUploadService();
+final TextEditingController _titleController = TextEditingController();
+final TextEditingController _descriptionController = TextEditingController();
+
+Future<void> pickVideo() async {
+  final result = await FilePicker.platform.pickFiles(type: FileType.video);
+  if (result != null) {
+    final file = File(result.files.single.path!);
+    selectedVideo = file;
+    videoUrl = await videoUploadService.uploadMedia(file);
+  }
+}
+
+Future<void> pickThumbnail() async {
+  final result = await FilePicker.platform.pickFiles(type: FileType.image);
+  if (result != null) {
+    final file = File(result.files.single.path!);
+    selectedThumbnail = file;
+    thumbnailUrl = await videoUploadService.uploadMedia(file);
+  }
+}
+
+class _AddVideoState extends State<AddVideo> {
+  Widget _buildThumbnail(double screenWidth, double screenHeight) {
+    // If user has picked a thumbnail, show it first
+    if (selectedThumbnail != null) {
+      return Image.file(
+        selectedThumbnail!,
+        width: screenWidth,
+        height: screenHeight * 0.3,
+        fit: BoxFit.cover,
+      );
+    }
+
+    if (widget.videoDocId != null) {
+      return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('videos')
+            .doc(widget.videoDocId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final data = snapshot.data!.data() as Map<String, dynamic>?;
+            final url = data?['thumbnailUrl'];
+            if (url != null && url.toString().isNotEmpty) {
+              return Image.network(
+                url,
+                width: screenWidth,
+                height: screenHeight * 0.3,
+                fit: BoxFit.cover,
+              );
+            }
+          }
+          // fallback
+          return Image.asset(
+            "assets/images/upload_video.png",
+            width: screenWidth,
+            height: screenHeight * 0.3,
+            fit: BoxFit.cover,
+          );
+        },
+      );
+    }
+
+    // Default asset
+    return Image.asset(
+      "assets/images/upload_video.png",
+      width: screenWidth,
+      height: screenHeight * 0.3,
+      fit: BoxFit.cover,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
-
-    final TextEditingController _titleController = TextEditingController();
-    final TextEditingController _descriptionController = TextEditingController();
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -26,7 +109,7 @@ class AddVideo extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
+            icon: const Icon(
               Icons.arrow_back,
               color: Color(0xff339D44),
             ),
@@ -39,31 +122,25 @@ class AddVideo extends StatelessWidget {
             style: GoogleFonts.raleway(
               fontWeight: FontWeight.w700,
               fontSize: 23,
-              color: Color(0xff292929),
+              color: const Color(0xff292929),
             ),
           ),
         ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(vertical: 20),
+          padding: const EdgeInsets.symmetric(vertical: 20),
           child: Center(
             child: Column(
               children: [
-                Image.asset(
-                  "assets/images/upload_video.png",
-                  width: screenWidth,
-                  height: screenHeight * 0.3,
-                  fit: BoxFit.cover,
-                ),
+                _buildThumbnail(screenWidth, screenHeight),
                 SizedBox(height: screenHeight * 0.02),
 
-                // Upload Video
                 DottedBorder(
                   borderType: BorderType.RRect,
-                  radius: Radius.circular(10),
-                  dashPattern: [9, 9],
-                  color: Color(0xff339D44),
+                  radius: const Radius.circular(10),
+                  dashPattern: const [9, 9],
+                  color: const Color(0xff339D44),
                   child: Container(
                     width: screenWidth * 0.8,
                     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
@@ -76,11 +153,14 @@ class AddVideo extends StatelessWidget {
                           style: GoogleFonts.raleway(
                             fontWeight: FontWeight.w400,
                             fontSize: 13,
-                            color: Color(0xff292929),
+                            color: const Color(0xff292929),
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await pickVideo();
+                            setState(() {});
+                          },
                           icon: Image.asset("assets/images/upload.png"),
                         ),
                       ],
@@ -92,9 +172,9 @@ class AddVideo extends StatelessWidget {
                 // Upload Thumbnail
                 DottedBorder(
                   borderType: BorderType.RRect,
-                  radius: Radius.circular(10),
-                  dashPattern: [9, 9],
-                  color: Color(0xff339D44),
+                  radius: const Radius.circular(10),
+                  dashPattern: const [9, 9],
+                  color: const Color(0xff339D44),
                   child: Container(
                     width: screenWidth * 0.8,
                     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
@@ -107,11 +187,14 @@ class AddVideo extends StatelessWidget {
                           style: GoogleFonts.raleway(
                             fontWeight: FontWeight.w400,
                             fontSize: 13,
-                            color: Color(0xff292929),
+                            color: const Color(0xff292929),
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await pickThumbnail();
+                            setState(() {});
+                          },
                           icon: Image.asset("assets/images/upload.png"),
                         ),
                       ],
@@ -120,22 +203,21 @@ class AddVideo extends StatelessWidget {
                 ),
                 SizedBox(height: screenHeight * 0.02),
 
-                // Title
                 Container(
                   width: screenWidth * 0.8,
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Color(0xffD4D4D4)),
+                    border: Border.all(color: const Color(0xffD4D4D4)),
                   ),
                   child: TextFormField(
-                    controller: _descriptionController,
+                    controller: _titleController,
                     decoration: InputDecoration(
                       hintText: "Title",
                       hintStyle: GoogleFonts.raleway(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xffB4B4B4),
+                        color: const Color(0xffB4B4B4),
                       ),
                       border: InputBorder.none,
                     ),
@@ -143,29 +225,28 @@ class AddVideo extends StatelessWidget {
                 ),
                 SizedBox(height: screenHeight * 0.02),
 
-                // Description
                 Container(
                   width: screenWidth * 0.8,
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Color(0xffD4D4D4)),
+                    border: Border.all(color: const Color(0xffD4D4D4)),
                   ),
                   child: TextFormField(
-                    controller: _titleController,
+                    controller: _descriptionController,
                     maxLines: 5,
                     decoration: InputDecoration(
                       hintText: "Description",
                       hintStyle: GoogleFonts.raleway(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xffB4B4B4),
+                        color: const Color(0xffB4B4B4),
                       ),
                       border: InputBorder.none,
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -182,17 +263,43 @@ class AddVideo extends StatelessWidget {
             width: screenWidth * 0.8,
             height: screenHeight * 0.07,
             child: TextButton(
-              onPressed: () {
+              onPressed: () async {
+                if (videoUrl == null || thumbnailUrl == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Please upload both video and thumbnail")),
+                  );
+                  return;
+                }
+                if (_titleController.text.isEmpty ||
+                    _descriptionController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Title and Description cannot be empty")),
+                  );
+                  return;
+                }
+
+                final docRef = FirebaseFirestore.instance.collection('videos').doc();
+
+                await docRef.set({
+                  'title': _titleController.text.trim(),
+                  'description': _descriptionController.text.trim(),
+                  'videoUrl': videoUrl,
+                  'thumbnailUrl': thumbnailUrl,
+                  'views': 0,
+                  'createdAt': FieldValue.serverTimestamp(),
+                });
+
+
                 show_upoaded_dialog_box(context);
               },
-              child: Text("Post"),
               style: TextButton.styleFrom(
-                backgroundColor: Color(0xff339D44),
-                foregroundColor: Color(0xffF4F4F4),
+                backgroundColor: const Color(0xff339D44),
+                foregroundColor: const Color(0xffF4F4F4),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
+              child: const Text("Post"),
             ),
           ),
         ),

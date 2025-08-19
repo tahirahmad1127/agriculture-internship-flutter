@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class VideoModel {
+  final String id;
   final String title;
   final String uploadDate;
   final String video;
@@ -13,6 +14,7 @@ class VideoModel {
   final IconData saveIcon;
 
   VideoModel({
+    required this.id,
     required this.title,
     required this.uploadDate,
     required this.video,

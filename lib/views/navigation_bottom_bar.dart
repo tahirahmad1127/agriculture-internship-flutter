@@ -21,7 +21,7 @@ class _NavigationBottomBarState extends State<NavigationBottomBar> {
     Home(),
     Questions(),
     TrainingVideos(),
-    Comments(),
+    Home(),
     Profile(),
   ];
 

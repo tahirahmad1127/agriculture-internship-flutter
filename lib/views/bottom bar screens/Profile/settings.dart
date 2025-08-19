@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Profile/profile.dart';
 import 'package:internship_task_1/views/verification_code.dart';
 
-class Settings extends StatelessWidget {
-  const Settings({super.key});
+class ProfileSettings extends StatelessWidget {
+  const ProfileSettings({super.key});
 
   @override
   Widget build(BuildContext context) {

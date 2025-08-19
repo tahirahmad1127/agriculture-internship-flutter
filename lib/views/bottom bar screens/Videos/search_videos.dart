@@ -23,7 +23,7 @@ class _SearchVideosState extends State<SearchVideos> {
         menuIcon: Icons.more_vert,
         commentIcon: Icons.chat_bubble_outline,
         saveIcon: Icons.bookmark_border,
-        viewIcon: Icons.remove_red_eye_outlined),
+        viewIcon: Icons.remove_red_eye_outlined, id: ''),
     VideoModel(
         title: "How to buy a Tractor",
         uploadDate: "21 Oct 2021 Monday",
@@ -34,7 +34,7 @@ class _SearchVideosState extends State<SearchVideos> {
         menuIcon: Icons.more_vert,
         commentIcon: Icons.chat_bubble_outline,
         saveIcon:Icons.bookmark_border,
-        viewIcon: Icons.remove_red_eye_outlined)
+        viewIcon: Icons.remove_red_eye_outlined, id: '')
   ];
 
   @override
@@ -183,7 +183,6 @@ class _SearchVideosState extends State<SearchVideos> {
                             SizedBox(width: Screen_width * 0.02,),
 
                             IconButton(onPressed: (){
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=> Comments()));
                             }, icon: Icon(videoItems[index].saveIcon),
                               color: Color(0xffB4B4B4),
                             ),

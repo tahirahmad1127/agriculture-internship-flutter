@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:internship_task_1/views/Search%20Screen/search_questions.dart';
-import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/Videos.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/AllVideos.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/add_video.dart';
+import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/recently_uploaded_videos.dart';
 import 'package:internship_task_1/views/bottom%20bar%20screens/Videos/search_videos.dart';
 
 class TrainingVideos extends StatelessWidget {
@@ -104,7 +105,8 @@ class TrainingVideos extends StatelessWidget {
             ]),
         body: TabBarView(
           children: [
-            Videos(),
+            AllVideos(),
+            RecentlyUploadedVideos(),
           ],
         ),
       ),
